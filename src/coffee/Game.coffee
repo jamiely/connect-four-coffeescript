@@ -1,18 +1,18 @@
 class Board
   constructor: ->
-    markers = @markers = 
+    @markers = 
       empty: ''
       a: 'a'
       b: 'b'
     @possibleMarkers = value for _, value of @markers
 
-    size = @size =
+    @size =
       width: 7
       height: 6
 
     # we throw away x and y here. we don't really need them
-    @board = [1..size.height].map ->
-      markers.empty for _ in [1..size.width]
+    @board = [1..@size.height].map =>
+      @markers.empty for _ in [1..@size.width]
 
   isInBounds: (index) =>
     row = index.row
@@ -21,7 +21,7 @@ class Board
 
   # Updates the board position
   move: (marker, position) =>
-    throw 'Invalid marker' if marker in @possibleMarkers
+    throw 'Invalid marker' if not marker in @possibleMarkers
 
     row = position.row
     col = position.col
@@ -52,6 +52,8 @@ class Board
       ), true
 
 # stuff
+class Move
+  constructor: (@col) ->
 
 class Game
   constructor: ->
@@ -64,6 +66,7 @@ class Game
       ), []
     @directions = _.reject @directions, (dir) ->
       dir.row is 0 and dir.col is 0
+    @currentMarker = @board.markers.a
 
   getBoard: =>
     @board
@@ -100,4 +103,43 @@ class Game
   isWinPossible: =>
     false
 
+  getCurrentMarker: =>
+    @currentMarker
+
+  markerAt: (index) =>
+    @board.markerAt index
+
+  getFirstEmptyRowInCol: (column) =>
+    throw 'Out of bounds' if not @board.isInBounds {row: 0, col: column}
+
+    helper = (row) =>
+      if row < 0
+        -1
+      else
+        marker = @markerAt 
+          row: row
+          col: column
+        if marker is @board.markers.empty
+          row
+        else
+          helper (row-1)
+
+    helper (@board.size.height-1)
+
+  toggleMarker: =>
+    @currentMarker = if @currentMarker is @board.markers.a then @board.markers.b else @board.markers.a
+
+  updateBoard: (index) =>
+    @board.move @currentMarker, index
+    @toggleMarker()
+
+  move: (move) =>
+    col = move.col
+    row = @getFirstEmptyRowInCol col
+    if row >= 0
+      @updateBoard 
+        row: row
+        col: col
+    else
+      false
 
