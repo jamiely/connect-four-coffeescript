@@ -1,4 +1,12 @@
+
+
 describe "Game", ->
+  game = null
+  initGame = ->
+    game = new Game
+
+  beforeEach initGame
+
   it "should be defined", ->
     expect(Game).toBeTruthy()
 
@@ -6,14 +14,28 @@ describe "Game", ->
     expect(game.getBoard()).toBeTruthy()
 
 describe "Board", ->
-  it "should have a board of have 7 columns and 6 rows", ->
+  game = null
+  initGame = ->
+    game = new Game
+  beforeEach initGame
+
+  it "should have a size of 7 columns and 6 rows", ->
     board = game.getBoard()
-    expect(board).toBeTruthy()
-    expect(board.size()).toBe
+    expect(board.size).toEqual
       width: 7
       height: 6
-  it "should be empty", ->
-    expect(false).toBeTruthy()
+
+  it "should have a board of have 7 columns and 6 rows", ->
+    board = game.getBoard()
+    example = [
+      ['', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '']
+    ]
+    expect(board.board).toEqual example
 
 describe "Move", ->
   it "should modify the board in the correct position", ->
