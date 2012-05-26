@@ -1,66 +1,3 @@
-class Board
-  constructor: (@size = {width: 7, height: 6}) ->
-    @markers = 
-      empty: ''
-      a: 'a'
-      b: 'b'
-    @possibleMarkers = value for _, value of @markers
-
-    @length = @size.width * @size.height
-
-    # we throw away x and y here. we don't really need them
-    @board = [1..@size.height].map =>
-      @markers.empty for _ in [1..@size.width]
-
-  isInBounds: (index) =>
-    row = index.row
-    col = index.col
-    not (col > @size.width-1 or col < 0 or row > @size.height-1 or row < 0)
-
-  # Updates the board position
-  move: (marker, position) =>
-    throw 'Invalid marker' if not marker in @possibleMarkers
-
-    row = position.row
-    col = position.col
-    throw 'Out of bounds' if not @isInBounds position
-
-    @board[row][col] = marker
-
-  markerAt: (index) =>
-    @board[index.row][index.col]
-
-  posIs: (index, marker) =>
-    m = @markerAt index
-    marker is m
-
-  positionIndices: =>
-    [0..@size.height-1].reduce ((mem, row) =>
-      row = [0..@size.width-1].map (col) =>
-        row: row
-        col: col
-      mem.concat row
-      ), []
-
-  # helper methods for isEmpty and movesRemaining
-  positionsEmpty: (fun) =>
-    @positionIndices().map (i) =>
-      @posIs i, @markers.empty
-
-  getEmptyPositions: =>
-    @positionIndices().filter (i) =>
-      @posIs i, @markers.empty
-
-  hasMovesRemaining: =>
-    _.any @positionsEmpty(), _.identity
-
-  isEmpty: =>
-    _.all @positionsEmpty(), _.identity
-
-# stuff
-class Move
-  constructor: (@col) ->
-
 class Game
   constructor: ->
     @board = new Board
@@ -70,6 +7,13 @@ class Game
         col: col
       mem.concat row
       ), []
+    # looks like, used as deltas
+    #     [
+    #       {row: -1, col: -1},
+    #       {row: -1, col: 0},
+    #       {row: -1, col: 1},
+    #       ...
+    #     ]
     @directions = _.reject @directions, (dir) ->
       dir.row is 0 and dir.col is 0
     @currentMarker = @board.markers.a
@@ -77,6 +21,15 @@ class Game
   getBoard: =>
     @board
 
+  # Recursive check for markers in a row
+  # @param {Object} index
+  # @param {String} marker
+  # @param {Object} delta
+  # @param {Number} steps
+  # @returns {Boolean} Returns true if the marker at the passed position
+  #                    matches the passed marker and markers in the same
+  #                    direction for the given number of steps _also_
+  #                    match the passed marker.
   checkPosition: (index, marker, delta, steps) =>
     board = @getBoard()
     if steps is 0
@@ -90,6 +43,7 @@ class Game
       # No match
       false
 
+  # Determines whether there is any winning combination of markers
   isWin: =>
     # we'll boil this into a recursive check to make things simpler
     board = @getBoard()
@@ -106,6 +60,7 @@ class Game
         _.any checked
     _.any results
 
+  # @todo Not well implemented
   isWinPossible: =>
     not @board.hasMovesRemaining()
 
@@ -115,9 +70,12 @@ class Game
   markerAt: (index) =>
     @board.markerAt index
 
+  # Returns the first empty row in the passed column. Note that the
+  # bottom row has the highest row index.
   getFirstEmptyRowInCol: (column) =>
     throw 'Out of bounds' if not @board.isInBounds {row: 0, col: column}
 
+    # This function implements a recursive check
     helper = (row) =>
       if row < 0
         -1
@@ -139,6 +97,11 @@ class Game
     @board.move @currentMarker, index
     @toggleMarker()
 
+  # Applies the passed move to the game.
+  # @param {Object} move is a Move object
+  # @returns {Mixed} Returns false if the move could not be made because
+  #                  someone won. Otherwise, returns the last marker
+  #                  used.
   move: (move) =>
     throw 'Cannot make another move because the game is already won.' if @isWin()
 

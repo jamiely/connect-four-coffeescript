@@ -18,6 +18,8 @@ prodCoffeeOpts = "--bare --output #{prodTargetJsDir} --compile #{prodTargetCoffe
 testCoffeeOpts = "--output #{testTargetJsDir}"
 
 prodCoffeeFiles = [
+  'Board',
+  'Move',
   'Game',
   'UI',
   'main'
