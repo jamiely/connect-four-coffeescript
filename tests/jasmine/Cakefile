@@ -18,7 +18,9 @@ prodCoffeeOpts = "--bare --output #{prodTargetJsDir} --compile #{prodTargetCoffe
 testCoffeeOpts = "--output #{testTargetJsDir}"
 
 prodCoffeeFiles = [
-  'Game'
+  'Game',
+  'UI',
+  'main'
 ]
 
 task 'watch:all', 'Watch production and test CoffeeScript', ->

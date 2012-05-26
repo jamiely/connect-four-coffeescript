@@ -1,16 +1,12 @@
 class Board
-  constructor: ->
+  constructor: (@size = {width: 7, height: 6}) ->
     @markers = 
       empty: ''
       a: 'a'
       b: 'b'
     @possibleMarkers = value for _, value of @markers
 
-    @size =
-      width: 7
-      height: 6
-
-    @length = 7 * 6
+    @length = @size.width * @size.height
 
     # we throw away x and y here. we don't really need them
     @board = [1..@size.height].map =>
