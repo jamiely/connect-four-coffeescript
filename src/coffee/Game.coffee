@@ -10,6 +10,8 @@ class Board
       width: 7
       height: 6
 
+    @length = 7 * 6
+
     # we throw away x and y here. we don't really need them
     @board = [1..@size.height].map =>
       @markers.empty for _ in [1..@size.width]
@@ -44,10 +46,20 @@ class Board
       mem.concat row
       ), []
 
-  isEmpty: =>
-    results = @positionIndices().map (i) =>
+  # helper methods for isEmpty and movesRemaining
+  positionsEmpty: (fun) =>
+    @positionIndices().map (i) =>
       @posIs i, @markers.empty
-    _.all results, _.identity
+
+  getEmptyPositions: =>
+    @positionIndices().filter (i) =>
+      @posIs i, @markers.empty
+
+  hasMovesRemaining: =>
+    _.any @positionsEmpty(), _.identity
+
+  isEmpty: =>
+    _.all @positionsEmpty(), _.identity
 
 # stuff
 class Move
@@ -99,7 +111,7 @@ class Game
     _.any results
 
   isWinPossible: =>
-    false
+    not @board.hasMovesRemaining()
 
   getCurrentMarker: =>
     @currentMarker

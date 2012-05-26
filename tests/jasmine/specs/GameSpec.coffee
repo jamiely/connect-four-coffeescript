@@ -65,6 +65,29 @@ describe "Board", ->
     board.move(board.markers.a, index)
     expect(board.posIs(index, board.markers.a)).toBe true
 
+  it "should be detectable when there are no moves left", ->
+    board = game.getBoard()
+    example = [
+      ['a', 'b', 'a', 'a', 'b', 'a', 'a'],
+      ['b', 'a', 'b', 'b', 'a', 'b', 'b'],
+      ['a', 'b', 'a', 'a', 'b', 'a', 'a'],
+      ['b', 'a', 'b', '', 'a', 'b', 'b'],
+      ['a', 'b', 'a', 'a', 'b', 'a', 'a'],
+      ['b', 'a', 'b', 'b', 'a', 'b', 'b']
+    ]
+    board.board = example
+    expect(board.hasMovesRemaining()).toBe true
+    example = [
+      ['a', 'b', 'a', 'a', 'b', 'a', 'a'],
+      ['b', 'a', 'b', 'b', 'a', 'b', 'b'],
+      ['a', 'b', 'a', 'a', 'b', 'a', 'a'],
+      ['b', 'a', 'b', 'b', 'a', 'b', 'b'],
+      ['a', 'b', 'a', 'a', 'b', 'a', 'a'],
+      ['b', 'a', 'b', 'b', 'a', 'b', 'b']
+    ]
+    board.board = example
+    expect(board.hasMovesRemaining()).toBe false
+
 describe "Move", ->
   game = null
 
