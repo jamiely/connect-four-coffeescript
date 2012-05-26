@@ -134,6 +134,8 @@ class Game
     @toggleMarker()
 
   move: (move) =>
+    throw 'Cannot make another move because the game is already won.' if @isWin()
+
     col = move.col
     row = @getFirstEmptyRowInCol col
     if row >= 0
