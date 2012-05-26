@@ -14,13 +14,18 @@ class Board
     @board = [1..size.height].map ->
       markers.empty for _ in [1..size.width]
 
+  isInBounds: (index) =>
+    row = index.row
+    col = index.col
+    not (col > @size.width-1 or col < 0 or row > @size.height-1 or row < 0)
+
   # Updates the board position
   move: (marker, position) =>
     throw 'Invalid marker' if marker in @possibleMarkers
 
     row = position.row
     col = position.col
-    throw 'Out of bounds' if col > @size.width or col < 0 or row > @size.height or row < 0 
+    throw 'Out of bounds' if not @isInBounds position
 
     @board[row][col] = marker
 
@@ -51,7 +56,48 @@ class Board
 class Game
   constructor: ->
     @board = new Board
+    @directions = [-1..1].reduce ((mem, row) =>
+      row = [-1..1].map (col) =>
+        row: row
+        col: col
+      mem.concat row
+      ), []
+    @directions = _.reject @directions, (dir) ->
+      dir.row is 0 and dir.col is 0
 
-  getBoard: ->
+  getBoard: =>
     @board
+
+  checkPosition: (index, marker, delta, steps) =>
+    board = @getBoard()
+    if steps is 0
+      true
+    else if board.isInBounds(index) and board.posIs(index, marker) 
+      newIndex = 
+        row: index.row + delta.row
+        col: index.col + delta.col
+      @checkPosition newIndex, marker, delta, steps-1
+    else
+      # No match
+      false
+
+  isWin: =>
+    # we'll boil this into a recursive check to make things simpler
+    board = @getBoard()
+    indices = board.positionIndices()
+    results = indices.map (i) =>
+      marker = board.markerAt i
+      if marker is board.markers.empty
+        false
+      else
+        checked = @directions.map (delta) =>
+          result = @checkPosition i, marker, delta, 4
+          result
+        # now check if any of the results were positive
+        _.any checked
+    _.any results
+
+  isWinPossible: =>
+    false
+
 
