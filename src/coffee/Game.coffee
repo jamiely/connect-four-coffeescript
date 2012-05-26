@@ -45,11 +45,9 @@ class Board
       ), []
 
   isEmpty: =>
-    indices = @positionIndices()
-    indices.reduce ((memo, i) =>
-      memo = memo and @posIs(i, @markers.empty)
-      memo
-      ), true
+    results = @positionIndices().map (i) =>
+      @posIs i, @markers.empty
+    _.all results, _.identity
 
 # stuff
 class Move
