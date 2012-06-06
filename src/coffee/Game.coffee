@@ -70,6 +70,9 @@ class Game
   markerAt: (index) =>
     @board.markerAt index
 
+  positionIndices: =>
+    @board.positionIndices()
+
   # Returns the first empty row in the passed column. Note that the
   # bottom row has the highest row index.
   getFirstEmptyRowInCol: (column) =>
@@ -114,3 +117,8 @@ class Game
     else
       false
 
+  getBoardSize: =>
+    @board.size
+
+  getMarkers: =>
+    @board.markers
