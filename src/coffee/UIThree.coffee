@@ -22,10 +22,12 @@ class UIThree
     @setupControl()
 
   setupControl: =>
-    inputColumn = $('<input />')
-    submitButton = $('<button>Submit</button>').click =>
-        @game.move new Move(inputColumn.val()-1)
-    $('body').prepend(submitButton).prepend(inputColumn)
+    instructions = $('<p>Press the numbers 1 through 7 to play a piece in that column</p>')
+    $('body').prepend(instructions)
+    ascii1 = '1'.charCodeAt()
+    $(document).keypress (ev) =>
+      console.log ev.which
+      @game.move new Move(ev.which-ascii1) if ev.which >= ascii1 and ev.which <= '9'.charCodeAt()
 
   setupPieces: =>
     @game.positionIndices().forEach @setupPiece
