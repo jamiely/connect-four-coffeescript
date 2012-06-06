@@ -31,9 +31,9 @@ Simple UI Gameplay: http://youtu.be/UYrY0yDt-sY
 3d UI Gameplay: http://youtu.be/Uj7cEo-iIVw
 
 A screenshot of the Simple UI view:
-![Simple UI](raw/master/img/ui_simple.png)
+![Simple UI](connect-four-coffeescript/raw/master/img/ui_simple.png)
 
 A screenshot of the 3d UI view:
-![3d UI](raw/master/img/ui_3d.png)
+![3d UI](connect-four-coffeescript/raw/master/img/ui_3d.png)
 
 
