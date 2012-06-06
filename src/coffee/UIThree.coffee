@@ -40,6 +40,9 @@ class UIThree
     a: newMat 0x00ff00
     b: newMat 0x0000ff
     grid: newMat 0xff0000
+    text: new THREE.MeshBasicMaterial 
+      color: 0xFFFF00
+      wireframe: true
 
   setupPiece: (index) =>
     cd = depth/2
@@ -63,6 +66,7 @@ class UIThree
     @grp.rotation.x = Math.PI 
     @grp
 
+
   init: =>
     @setupGroup()
 
@@ -81,6 +85,21 @@ class UIThree
     scene.add @grp
     @setupPieces()
 
+
+    # Setup the text geometry used to display a win notice
+    textGeom = new THREE.TextGeometry "Win!", 
+      font: "helvetiker"
+      size: 100
+    textGeom.computeBoundingBox()
+    console.log "Textgeom bounding box: #{textGeom.boundingBox.min.x}  #{textGeom.boundingBox.max.x}"
+
+    @textMesh = new THREE.Mesh textGeom, materials.text
+    @textMesh.position.z = 700
+    @textMesh.position.x -= textGeom.boundingBox.max.x/2
+    @textMesh.position.y -= textGeom.boundingBox.max.y/2
+    @textMesh.visible = false
+    scene.add @textMesh
+
     renderer = new THREE.CanvasRenderer
     renderer.setSize w, h
 
@@ -91,9 +110,14 @@ class UIThree
     @render()
 
   render: =>
-    @grp.rotation.y += 0.02
+    if @game.isWin()
+      @grp.visible = false
+      @textMesh.visible = true
+      @textMesh.rotation.x += 0.01
+    else
+      @grp.rotation.y += 0.02
 
-    @game.positionIndices().forEach @renderIndex
+      @game.positionIndices().forEach @renderIndex
 
     renderer.render scene, camera
 
