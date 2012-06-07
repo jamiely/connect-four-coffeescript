@@ -100,7 +100,7 @@ class UIThree
 
     blocks = @game.positionIndices().map (index) =>
       blk = @createMeshBlock index, gridGeom, gridMaterial
-      holeGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth * 2, cylinderSegments
+      holeGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth, cylinderSegments
       hole = @createMeshBlock index, holeGeom, materials.empty
 
       blk.subtract hole
