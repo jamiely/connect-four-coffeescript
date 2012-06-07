@@ -32,35 +32,45 @@ class UIThree
   setupPieces: =>
     @game.positionIndices().forEach @setupPiece
 
-  newMat = (color) ->
+  newMat = (color, wireframe = false) ->
     new THREE.MeshBasicMaterial
       color: color
-      wireframe: true
+      wireframe: wireframe
 
   materials =
-    empty: newMat 0x999999
+    empty: newMat(0x999999, true)
     a: newMat 0x00ff00
     b: newMat 0x0000ff
     grid: newMat 0xff0000
-    text: new THREE.MeshBasicMaterial 
-      color: 0xFFFF00
-      wireframe: true
+    text: newMat 0xFFFF00
 
-  setupPiece: (index) =>
+  createPiece: (index) =>
     cd = depth/2
-    pieceGeom = new THREE.CylinderGeometry cd, cd, cd
+    pieceGeom = new THREE.CylinderGeometry cd, cd, cd*2, 6
     pieceMesh = new THREE.Mesh pieceGeom, materials.empty
     pieceMesh.position.x = index.col * pieceWidth - offsetW
     pieceMesh.position.y = index.row * pieceHeight - offsetH
     pieceMesh.rotation.x = Math.PI/2
+    pieceMesh
+
+  setupPiece: (index) =>
+    pieceMesh = @createPiece index
     pieces[index.row] = [] unless !!pieces[index.row]
     pieces[index.row][index.col] = pieceMesh
 
     @grp.add pieceMesh
 
   setupGrid: =>
-    # Setup the grid mesh
-    gridMesh = new THREE.Mesh geometry, material
+    # first get the original grid mesh
+    plainGeom = new THREE.CubeGeometry width, height, depth
+    gridMesh = new THREE.Mesh plainGeom, materials.grid
+
+    ## now get the "holes" we're subtracting from the rectangle
+    holes = @game.positionIndices().map(@createPiece)
+    holes.forEach (h) ->
+      gridMesh.subtract h
+    #gridMesh.subtract holes[0]
+
     gridMesh
 
   setupGroup: =>
@@ -78,9 +88,6 @@ class UIThree
     camera = new THREE.PerspectiveCamera 75, w/h, 1, 10000
     camera.position.z = 1000
     scene.add camera
-
-    geometry = new THREE.CubeGeometry width, height, depth
-    material = materials.grid
 
     @grp.add @setupGrid()
 
@@ -102,7 +109,7 @@ class UIThree
     @textMesh.visible = false
     scene.add @textMesh
 
-    renderer = new THREE.CanvasRenderer
+    renderer = new THREE.WebGLRenderer
     renderer.setSize w, h
 
     $(@elementId).append renderer.domElement
