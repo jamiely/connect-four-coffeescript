@@ -141,11 +141,17 @@ class UIThree
     renderer.render scene, camera
 
   renderIndex: (index) =>
+    markers = @getMarkers()
     piece = pieces[index.row][index.col]
-    piece.material = @getMaterialByMarker @game.markerAt(index)
+    marker = @game.markerAt(index)
+    piece.material = @getMaterialByMarker marker
+    piece.visible = marker != markers.empty 
+
+  getMarkers: =>
+    @game.getMarkers()
 
   getMaterialByMarker: (marker) =>
-    markers = @game.getMarkers()
+    markers = @getMarkers()
     switch marker
       when markers.empty then materials.empty
       when markers.a then materials.a
