@@ -4,6 +4,7 @@ class UIThree
   halfDepth = halfW = halfH = offsetW = offsetH = 0
   pieceWidth = pieceHeight = pieceDepth = 100
   pieces = []
+  cylinderSegments = 8
 
   constructor: (@elementId, @game) ->
     @boardSize = @game.getBoardSize()
@@ -33,7 +34,7 @@ class UIThree
     @game.positionIndices().forEach @setupPiece
 
   newMat = (color, wireframe = false) ->
-    new THREE.MeshBasicMaterial
+    new THREE.MeshLambertMaterial
       color: color
       wireframe: wireframe
 
@@ -45,7 +46,7 @@ class UIThree
     text: newMat 0xFFFF00
 
   createPiece: (index) =>
-    pieceGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth, 6
+    pieceGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth, cylinderSegments
     @createMeshBlock index, pieceGeom
 
   createMeshBlock: (index, geom, material = materials.empty) =>
@@ -69,10 +70,13 @@ class UIThree
       gridGroup.add obj
 
     gridGeom = new THREE.CubeGeometry depth, depth, depth
+    #gridMaterial =  new THREE.MeshLambertMaterial( { color: 0xaaaaDD, shading: THREE.FlatShading } )
+    gridMaterial = new THREE.MeshPhongMaterial
+      color: 0xff0000
 
     blocks = @game.positionIndices().map (index) =>
-      blk = @createMeshBlock index, gridGeom, materials.grid
-      holeGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth * 2, 6
+      blk = @createMeshBlock index, gridGeom, gridMaterial
+      holeGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth * 2, cylinderSegments
       hole = @createMeshBlock index, holeGeom, materials.empty
 
       blk.subtract hole
@@ -118,6 +122,15 @@ class UIThree
     @textMesh.position.y -= textGeom.boundingBox.max.y/2
     @textMesh.visible = false
     scene.add @textMesh
+
+    #lighting
+    directionalLight = new THREE.DirectionalLight()
+    directionalLight.position.set( 1, 1, 1).normalize()
+    scene.add( directionalLight )
+
+    directionalLight = new THREE.DirectionalLight()
+    directionalLight.position.set( -1, -1, -1).normalize()
+    scene.add( directionalLight ) 
 
     renderer = new THREE.WebGLRenderer
     renderer.setSize w, h
