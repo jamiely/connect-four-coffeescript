@@ -47,7 +47,24 @@ class UIThree
 
   createPiece: (index) =>
     pieceGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth, cylinderSegments
-    @createMeshBlock index, pieceGeom
+
+    mesh = @createMeshBlock index, pieceGeom
+    pieceGeom.computeBoundingBox()
+    pieceGeomBox = pieceGeom.boundingBox
+
+    # create a solid we can use to create an inset on the piece, to give it some definition
+    pieceInsetGeom = new THREE.CylinderGeometry halfDepth/1.5, halfDepth/1.5, depth/4, cylinderSegments
+    subtractInset = (z) =>
+      pieceInsetMesh = @createMeshBlock index, pieceInsetGeom
+      pieceInsetMesh.position.z = z
+      # subtract the inset to give a beveled look
+      mesh.subtract pieceInsetMesh
+      pieceInsetMesh 
+
+    [pieceGeomBox.max.z, pieceGeomBox.min.z].forEach subtractInset
+
+    mesh
+
 
   createMeshBlock: (index, geom, material = materials.empty) =>
     mesh = new THREE.Mesh geom, material
