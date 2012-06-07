@@ -51,6 +51,7 @@ class UIThree
     b: newMat 0x000000
     grid: newMat 0xffff00
     text: newMat 0xFF0000
+    leg: newMat 0x0000ff
     wire: new THREE.MeshBasicMaterial
       color: 0xaaaaaa
       wireframe: true
@@ -118,7 +119,30 @@ class UIThree
 
     blocks.forEach gridAdd
 
+    gridWidth = depth * @boardSize.width
+    legs = @createGridLegs gridWidth
+    legs.forEach (leg) ->
+      gridGroup.add leg
+
     gridGroup
+
+  createGridLegs: (gridWidth) =>
+    right = @createGridLeg gridWidth, 1
+    left = @createGridLeg gridWidth, -1
+    [right, left]
+
+  createGridLeg: (gridWidth, sign) =>
+    legGeom = new THREE.Object3D
+    legHeight = height * 1.5
+    vert = new THREE.CubeGeometry halfDepth, legHeight, depth*1.5
+    vertMesh = new THREE.Mesh vert, materials.leg
+
+    console.log "gridWidth = #{gridWidth}"
+    vertMesh.position.x = sign * (gridWidth/2 + halfDepth/2)
+    vertMesh.position.y += legHeight/8
+
+    legGeom.add vertMesh
+    legGeom
 
 
   setupGroup: =>
