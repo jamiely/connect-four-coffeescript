@@ -1,14 +1,16 @@
 class UIThree
   camera = scene = renderer = geometry = material = gridMesh = null
-  depth = width = height = 0
+  width = height = 0
+  depth = 100
   halfDepth = halfW = halfH = offsetW = offsetH = 0
   pieceWidth = pieceHeight = pieceDepth = 100
+  pieceInsetDepth = pieceInsetRadius = 0
   pieces = []
   cylinderSegments = 8
 
   constructor: (@elementId, @game) ->
     @boardSize = @game.getBoardSize()
-    depth = pieceDepth
+
     width = pieceWidth * @boardSize.width
     height = pieceHeight * @boardSize.height
     halfW = width/2
@@ -16,6 +18,11 @@ class UIThree
     halfDepth = depth/2
     offsetW = halfW - halfDepth
     offsetH = halfH - halfDepth
+
+    pieceDepth = depth/1.5
+    pieceInsetDepth = depth/4
+    pieceInsetRadius = halfDepth/1.5
+
 
   start: =>
     @init()
@@ -46,14 +53,14 @@ class UIThree
     text: newMat 0xFFFF00
 
   createPiece: (index) =>
-    pieceGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth, cylinderSegments
+    pieceGeom = new THREE.CylinderGeometry halfDepth, halfDepth, pieceDepth, cylinderSegments
 
     mesh = @createMeshBlock index, pieceGeom
     pieceGeom.computeBoundingBox()
     pieceGeomBox = pieceGeom.boundingBox
 
     # create a solid we can use to create an inset on the piece, to give it some definition
-    pieceInsetGeom = new THREE.CylinderGeometry halfDepth/1.5, halfDepth/1.5, depth/4, cylinderSegments
+    pieceInsetGeom = new THREE.CylinderGeometry pieceInsetRadius, pieceInsetRadius, pieceDepth - pieceInsetDepth, cylinderSegments
     subtractInset = (z) =>
       pieceInsetMesh = @createMeshBlock index, pieceInsetGeom
       pieceInsetMesh.position.z = z
