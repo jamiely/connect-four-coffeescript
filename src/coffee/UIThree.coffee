@@ -45,13 +45,15 @@ class UIThree
     text: newMat 0xFFFF00
 
   createPiece: (index) =>
-    cd = depth/2
-    pieceGeom = new THREE.CylinderGeometry cd, cd, cd*2, 6
-    pieceMesh = new THREE.Mesh pieceGeom, materials.empty
-    pieceMesh.position.x = index.col * pieceWidth - offsetW
-    pieceMesh.position.y = index.row * pieceHeight - offsetH
-    pieceMesh.rotation.x = Math.PI/2
-    pieceMesh
+    pieceGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth, 6
+    @createMeshBlock index, pieceGeom
+
+  createMeshBlock: (index, geom, material = materials.empty) =>
+    mesh = new THREE.Mesh geom, material
+    mesh.position.x = index.col * pieceWidth - offsetW
+    mesh.position.y = index.row * pieceHeight - offsetH
+    mesh.rotation.x = Math.PI/2
+    mesh
 
   setupPiece: (index) =>
     pieceMesh = @createPiece index
@@ -61,17 +63,25 @@ class UIThree
     @grp.add pieceMesh
 
   setupGrid: =>
-    # first get the original grid mesh
-    plainGeom = new THREE.CubeGeometry width, height, depth
-    gridMesh = new THREE.Mesh plainGeom, materials.grid
+    # will contain the grid objects
+    gridGroup = new THREE.Object3D
+    gridAdd = (obj) ->
+      gridGroup.add obj
 
-    ## now get the "holes" we're subtracting from the rectangle
-    holes = @game.positionIndices().map(@createPiece)
-    holes.forEach (h) ->
-      gridMesh.subtract h
-    #gridMesh.subtract holes[0]
+    gridGeom = new THREE.CubeGeometry depth, depth, depth
 
-    gridMesh
+    blocks = @game.positionIndices().map (index) =>
+      blk = @createMeshBlock index, gridGeom, materials.grid
+      holeGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth * 2, 6
+      hole = @createMeshBlock index, holeGeom, materials.empty
+
+      blk.subtract hole
+      blk
+
+    blocks.forEach gridAdd
+
+    gridGroup
+
 
   setupGroup: =>
     @grp = new THREE.Object3D
@@ -124,7 +134,7 @@ class UIThree
       @textMesh.visible = true
       @textMesh.rotation.x += 0.01
     else
-      @grp.rotation.y += 0.02
+      @grp.rotation.y -= 0.02
 
       @game.positionIndices().forEach @renderIndex
 
