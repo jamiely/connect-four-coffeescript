@@ -47,10 +47,13 @@ class UIThree
 
   materials =
     empty: newMat(0x999999, true)
-    a: newMat 0x00ff00
-    b: newMat 0x0000ff
-    grid: newMat 0xff0000
-    text: newMat 0xFFFF00
+    a: newMat 0xff0000
+    b: newMat 0x000000
+    grid: newMat 0xffff00
+    text: newMat 0xFF0000
+    wire: new THREE.MeshBasicMaterial
+      color: 0xaaaaaa
+      wireframe: true
 
   createPiece: (index) =>
     pieceGeom = new THREE.CylinderGeometry halfDepth, halfDepth, pieceDepth, cylinderSegments
@@ -94,16 +97,23 @@ class UIThree
       gridGroup.add obj
 
     gridGeom = new THREE.CubeGeometry depth, depth, depth
-    #gridMaterial =  new THREE.MeshLambertMaterial( { color: 0xaaaaDD, shading: THREE.FlatShading } )
-    gridMaterial = new THREE.MeshPhongMaterial
-      color: 0xff0000
+    pieceSlotGeom = new THREE.CubeGeometry halfDepth, pieceDepth, depth
 
     blocks = @game.positionIndices().map (index) =>
-      blk = @createMeshBlock index, gridGeom, gridMaterial
+      blk = @createMeshBlock index, gridGeom, materials.grid
+
+      # first we're going to work on removing the piece hole
       holeGeom = new THREE.CylinderGeometry halfDepth, halfDepth, depth, cylinderSegments
       hole = @createMeshBlock index, holeGeom, materials.empty
-
       blk.subtract hole
+
+      # now let's remove the portion that allows the piece to fall through the top
+      if index.row != @game.getBoardSize().height-1
+        slot = @createMeshBlock index, pieceSlotGeom, materials.wire
+        slot.rotation.x = Math.PI/2
+        slot.rotation.z = Math.PI/2
+        blk.subtract slot
+
       blk
 
     blocks.forEach gridAdd
@@ -171,6 +181,7 @@ class UIThree
       @textMesh.visible = true
       @textMesh.rotation.x += 0.01
     else
+      @grp.rotation.x -= 0.01
       @grp.rotation.y -= 0.02
 
       @game.positionIndices().forEach @renderIndex
