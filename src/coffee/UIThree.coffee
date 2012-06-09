@@ -6,7 +6,10 @@ class UIThree
   pieceWidth = pieceHeight = pieceDepth = 100
   pieceInsetDepth = pieceInsetRadius = 0
   pieces = []
-  cylinderSegments = 8
+  cylinderSegments = 24
+  PIdiv2 = Math.PI / 2
+  PIdiv4 = Math.PI / 4
+  PIdiv8 = Math.PI / 8
 
   sound = (basename) ->
     a = new Audio("audio/#{basename}.wav")
@@ -89,7 +92,7 @@ class UIThree
     mesh = new THREE.Mesh geom, material
     mesh.position.x = index.col * pieceWidth - offsetW
     mesh.position.y = index.row * pieceHeight - offsetH
-    mesh.rotation.x = Math.PI/2
+    mesh.rotation.x = PIdiv2
     mesh
 
   setupPiece: (index) =>
@@ -119,8 +122,8 @@ class UIThree
       # now let's remove the portion that allows the piece to fall through the top
       if index.row != @game.getBoardSize().height-1
         slot = @createMeshBlock index, pieceSlotGeom, materials.wire
-        slot.rotation.x = Math.PI/2
-        slot.rotation.z = Math.PI/2
+        slot.rotation.x = PIdiv2
+        slot.rotation.z = PIdiv2
         blk.subtract slot
 
       blk
@@ -214,17 +217,21 @@ class UIThree
       sound 'cheer'
       winDisplayed = true
  
+  direction = 1
   render: =>
+    @game.positionIndices().forEach @renderIndex
+
     if @game.isWin()
       win()
-      @grp.visible = false
       @textMesh.visible = true
       @textMesh.rotation.x += 0.01
     else
-      @grp.rotation.x -= 0.01
-      @grp.rotation.y -= 0.02
+      @grp.rotation.y += direction * 0.005
+      if direction > 0 and @grp.rotation.y > PIdiv8
+        direction = -1
+      else if direction < 0 and @grp.rotation.y < -PIdiv8
+        direction = 1
 
-      @game.positionIndices().forEach @renderIndex
 
     renderer.render scene, camera
 
