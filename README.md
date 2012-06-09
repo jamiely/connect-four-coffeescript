@@ -37,4 +37,10 @@ A screenshot of the Simple UI view:
 A screenshot of the 3d UI view:
 ![3d UI](connect-four-coffeescript/raw/master/img/ui_3d_csg.png)
 
+Assets
+------
+
+The drop sound is from: http://www.freesound.org/people/FreqMan/sounds/43603/
+Cheer sound: http://www.freesound.org/people/Tomlija/sounds/99634/
+
 

@@ -8,6 +8,10 @@ class UIThree
   pieces = []
   cylinderSegments = 8
 
+  sound = (basename) ->
+    a = new Audio("audio/#{basename}.wav")
+    a.play()
+
   constructor: (@elementId, @game) ->
     @boardSize = @game.getBoardSize()
 
@@ -29,13 +33,17 @@ class UIThree
     @animate()
     @setupControl()
 
+  move: (col) =>
+    @game.move new Move(col)
+    sound 'drop'
+
   setupControl: =>
     instructions = $('<p>Press the numbers 1 through 7 to play a piece in that column</p>')
     $('body').prepend(instructions)
     ascii1 = '1'.charCodeAt()
     $(document).keypress (ev) =>
       console.log ev.which
-      @game.move new Move(ev.which-ascii1) if ev.which >= ascii1 and ev.which <= '9'.charCodeAt()
+      @move(ev.which-ascii1) if ev.which >= ascii1 and ev.which <= '9'.charCodeAt()
 
   setupPieces: =>
     @game.positionIndices().forEach @setupPiece
@@ -199,8 +207,16 @@ class UIThree
     requestAnimationFrame @animate
     @render()
 
+  winDisplayed = false
+
+  win = ->
+    if not winDisplayed
+      sound 'cheer'
+      winDisplayed = true
+ 
   render: =>
     if @game.isWin()
+      win()
       @grp.visible = false
       @textMesh.visible = true
       @textMesh.rotation.x += 0.01
