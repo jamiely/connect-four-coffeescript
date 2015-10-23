@@ -12,8 +12,10 @@ Usage
 To run the tests or the app, compile the coffee files using the included cake 
 file. 
 
-    cd tests/jasmine
-    cake watch:all
+```bash
+cd tests/jasmine
+cake watch:all
+```
 
 Run the spec runner by opening
 
