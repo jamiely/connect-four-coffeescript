@@ -3,3 +3,5 @@ tests/jasmine/test/src/js
 tests/jasmine/npm-debug.log
 tests/jasmine/LICENSE.txt
 
+.tmp
+node_modules
