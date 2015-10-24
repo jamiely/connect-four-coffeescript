@@ -1,0 +1,19 @@
+{
+  "name": "connect-four-coffeescript",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jamiely/connect-four-coffeescript",
+  "authors": [
+    "Jamie Ly <jamie.ly@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "jasmine": "~2.3.4"
+  }
+}
