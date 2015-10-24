@@ -1,34 +1,35 @@
 {
   "name": "connect-four-coffeescript",
   "version": "1.0.0",
-  "description": "connect-four ============",
+  "description": "An implementation of connect-four in Coffeescript",
   "main": null,
   "directories": {
     "test": "tests"
   },
   "dependencies": {
-    "cake": "^0.1.1",
-    "phantom-jasmine": "^0.3.0"
   },
   "devDependencies": {
     "coffee-script": "^1.10.0",
     "gulp": "^3.9.0",
     "gulp-coffee": "^2.3.1",
+    "gulp-concat": "^2.6.0",
     "gulp-jasmine-browser": "^0.2.3",
+    "gulp-sourcemaps": "^1.6.0",
     "gulp-util": "^3.0.7",
     "merge-stream": "^1.0.0",
     "phantom-jasmine": "^0.3.0",
     "phantomjs": "^1.9.18"
   },
   "scripts": {
-    "test": "gulp jasmine-phantom"
+    "test": "gulp jasmine-phantom",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jamiely/connect-four-coffeescript.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jamiely/connect-four-coffeescript/issues"
   },
