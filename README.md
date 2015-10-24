@@ -7,23 +7,17 @@ connect-four
 Intro
 -----
 
-This was mostly written to get some coffeescript practice.
+This was mostly written to get some CoffeeScript practice.
 
 Usage
 -----
 
-To run the the app, compile the coffee files using the included cake 
-file. 
+To run the the app, compile the coffee files using `gulp build`.
+This will concatenate the CoffeeScript source files, convert the
+file into JavaScript, and put `app.js` in the `js/build` file.
+An alternative is to run `npm run build`.
 
-```bash
-cd tests/jasmine
-cake watch:all
-```
-
-Run the main app at the following URL after compiling the coffee script
-files:
-
-    /index.html
+Run the main app by opening `index.html` in a browser.
 
 Tests
 -----
@@ -53,7 +47,7 @@ A screenshot of the 3d UI view:
 Assets
 ------
 
-The drop sound is from: http://www.freesound.org/people/FreqMan/sounds/43603/
-Cheer sound: http://www.freesound.org/people/Tomlija/sounds/99634/
+* The drop sound is from: http://www.freesound.org/people/FreqMan/sounds/43603/
+* Cheer sound: http://www.freesound.org/people/Tomlija/sounds/99634/
 
 
