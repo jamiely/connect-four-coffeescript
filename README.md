@@ -1,6 +1,9 @@
 connect-four
 ============
 
+[![Build Status](https://travis-ci.org/jamiely/connect-four-coffeescript.svg?branch=master)](https://travis-ci.org/jamiely/connect-four-coffeescript)
+
+
 Intro
 -----
 
