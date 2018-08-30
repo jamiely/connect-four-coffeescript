@@ -12,7 +12,7 @@ This was mostly written to get some CoffeeScript practice.
 Usage
 -----
 
-To run the the app, compile the coffee files using `gulp build`.
+To run the app, compile the coffee files using `gulp build`.
 This will concatenate the CoffeeScript source files, convert the
 file into JavaScript, and put `app.js` in the `js/build` file.
 An alternative is to run `npm run build`.
